@@ -1,0 +1,20 @@
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+apply plugin: 'application'
+
+group = 'uk.gemwire'
+archivesBaseName = 'mcpconvert'
+version = '0.1'
+
+application {
+    mainClassName = 'uk.gemwire.mcpconvert.Main'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(15)
+    }
+}
