@@ -1,9 +1,6 @@
-repositories {
-    mavenCentral()
-    jcenter()
+plugins {
+	id 'application'
 }
-
-apply plugin: 'application'
 
 group = 'uk.gemwire'
 archivesBaseName = 'mcpconvert'
@@ -17,4 +14,14 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(15)
     }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url = 'https://files.minecraftforge.net/maven/' }
+}
+
+dependencies {
+	implementation group: 'net.minecraftforge', name: 'srgutils', version: '0.3.0'
 }
