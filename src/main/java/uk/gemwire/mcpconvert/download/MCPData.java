@@ -13,8 +13,12 @@ import uk.gemwire.mcpconvert.download.util.Caching;
 public class MCPData {
 
     public static ZipFile provide(String version) throws IOException {
+        return new ZipFile(provideFile(version));
+    }
+
+    public static File provideFile(String version) throws IOException {
         String url = "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/{version}/mcp-{version}-srg.zip".replace("{version}", version);
-        return new ZipFile(Caching.cached("mcp-{version}-srg.zip".replace("{version}", version), (file) -> downloadFileFromUrl(url, file)));
+        return Caching.cached("mcp-{version}-srg.zip".replace("{version}", version), (file) -> downloadFileFromUrl(url, file));
     }
 
     private static void downloadFileFromUrl(String url, File destination) throws IOException {
