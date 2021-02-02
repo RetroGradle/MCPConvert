@@ -22,11 +22,6 @@ import static java.nio.file.FileSystems.newFileSystem;
  * @author RetroGradle
  */
 public class Main {
-    // The main in-memory FileSystem (Jimfs)
-    public static FileSystem MEMORY_FS;
-    // The in-memory output zip (stored in MEMORY_FS)
-    public static Path MEMORY_OUTPUT_PATH;
-
     public static void main(String... args) throws IOException {
         System.out.println("=== MCPConvert (RetroGradle) ===");
         System.out.println("\"Updating MCPConfig for blockheads\"");
@@ -34,7 +29,8 @@ public class Main {
         String version = args.length > 0 ? args[0] : CLIUtils.defaultedInput("MCP Version", "1.11.2");
         System.out.println("Converting data for MCP version " + version);
 
-        MEMORY_FS = Jimfs.newFileSystem("mcpconvert", Configuration.unix());
+        // The main in-memory FileSystem (Jimfs)
+        FileSystem inMemFS = Jimfs.newFileSystem("mcpconvert", Configuration.unix());
 
         // Get MCP data zip (downloaded and/or cached)
         System.out.println(" - Retrieving MCP data zip");
@@ -42,15 +38,15 @@ public class Main {
 
         // Copy the MCP data zip to memory
         System.out.println(" - Copying data zip to memory");
-        Path inMemMCPData = MEMORY_FS.getPath(mcpDataFile.getFileName().toString());
+        Path inMemMCPData = inMemFS.getPath(mcpDataFile.getFileName().toString());
         Files.copy(mcpDataFile, inMemMCPData);
         // Get the path to the in-memory output zip
-        MEMORY_OUTPUT_PATH = MEMORY_FS.getPath("output.zip");
+        Path memoryOutputZip = inMemFS.getPath("output.zip");
 
         // Open up the two zips (MCP data and the output) in-memory
         System.out.println(" - Loading in-memory input data and output zips");
         try (FileSystem mcpData = newFileSystem(inMemMCPData);
-            FileSystem output = newFileSystem(MEMORY_OUTPUT_PATH, Map.of("create", true))) {
+            FileSystem output = newFileSystem(memoryOutputZip, Map.of("create", true))) {
 
             // Convert patches for client, joined, server
             System.out.println(" - Converting client patches");
@@ -68,7 +64,7 @@ public class Main {
                 Files.readAllBytes(mcpData.getPath("joined.srg")))
             ) {
                 System.out.println(" - Converting SRG to TSRG");
-                Path tempTsrg = MEMORY_FS.getPath("config/joined.tsrg");
+                Path tempTsrg = inMemFS.getPath("config/joined.tsrg");
                 JoinedSrgConverter.convert(inputStream, tempTsrg);
                 Files.copy(tempTsrg, output.getPath("joined.tsrg"));
             }
@@ -93,8 +89,8 @@ public class Main {
         // (FSs are closed here; important for the output.zip so the contents are written)
         // Copy the resulting zip
         System.out.println(" - Copying output zip to disk");
-        Files.copy(MEMORY_OUTPUT_PATH, Path.of("output.zip"), StandardCopyOption.REPLACE_EXISTING);
-        MEMORY_FS.close();
+        Files.copy(memoryOutputZip, Path.of("output.zip"), StandardCopyOption.REPLACE_EXISTING);
+        inMemFS.close();
 
         System.out.printf("Conversion of MCP data for version %s is complete.%n", version);
     }
