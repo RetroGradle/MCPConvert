@@ -1,4 +1,4 @@
-package uk.gemwire.mcpconvert;
+package uk.gemwire.mcpconvert.convert;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,12 +10,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Sm0keySa1m0n
+ */
 public class JoinedExcSplitter {
 
     private static final Pattern CONSTRUCTOR_REGEX = Pattern.compile("(\\.<init>)(\\(\\S*)(=\\S*\\|p_i)(\\d*)");
     private static final Pattern EXCEPTION_REGEX = Pattern.compile("(\\(\\S*\\)\\S*)=(\\S*)\\|");
     private static final Pattern ACCESS_REGEX = Pattern.compile("(\\S*)\\.(\\S*)(\\(\\S*\\)\\S*)-Access=(\\S*)");
 
+    @SuppressWarnings("StringBufferReplaceableByString")
     public static Result parseExc(Path excFile) throws IOException {
         List<String> lines = Files.readAllLines(excFile, StandardCharsets.UTF_8);
 
@@ -34,12 +38,12 @@ public class JoinedExcSplitter {
                 // .<init> SIGNATURE =|p_i SRG
                 // CLASS is line[0]..match0
 
-                StringBuilder constructorBuilder = new StringBuilder();
-
-                constructorBuilder.append(constructorMatcher.group(4) + " ");
                 final String className = line.substring(0, constructorMatcher.start(0));
-                constructorBuilder.append(className + " ");
-                constructorBuilder.append(constructorMatcher.group(2));
+
+                StringBuilder constructorBuilder = new StringBuilder()
+                    .append(constructorMatcher.group(4)).append(" ")
+                    .append(className).append(" ")
+                    .append(constructorMatcher.group(2));
 
                 constructorLines.add(constructorBuilder.toString());
                 continue;
@@ -54,12 +58,12 @@ public class JoinedExcSplitter {
                 // Matches are in the order
                 // (PARAMS)RETURN = EXCEPTION |
 
-                StringBuilder exceptionBuilder = new StringBuilder();
-
                 final String className = line.substring(0, exceptionMatcher.start(0)).replace(".", "/");
-                exceptionBuilder.append(className + " ");
-                exceptionBuilder.append(exceptionMatcher.group(1) + " ");
-                exceptionBuilder.append(exceptionMatcher.group(2));
+
+                StringBuilder exceptionBuilder = new StringBuilder()
+                    .append(className).append(" ")
+                    .append(exceptionMatcher.group(1)).append(" ")
+                    .append(exceptionMatcher.group(2));
                 exceptionLines.add(exceptionBuilder.toString());
                 continue;
             }
@@ -71,28 +75,26 @@ public class JoinedExcSplitter {
 
                 // accessMatches is in the form
                 // CLASS OBJECT SIGNATURE ACCESS
-                StringBuilder accessBuilder = new StringBuilder();
-
-                accessBuilder.append(accessMatcher.group(4) + " ");
-                accessBuilder.append(accessMatcher.group(1) + " ");
-                accessBuilder.append(accessMatcher.group(2) + " ");
-                accessBuilder.append(accessMatcher.group(3));
+                StringBuilder accessBuilder = new StringBuilder()
+                    .append(accessMatcher.group(4)).append(" ")
+                    .append(accessMatcher.group(1)).append(" ")
+                    .append(accessMatcher.group(2)).append(" ")
+                    .append(accessMatcher.group(3));
 
                 accessLines.add(accessBuilder.toString());
                 continue;
             }
 
-            System.out.println("No useful data on line: " + line);
+            System.err.println("JoinedExcSplitter: No useful data on line: " + line);
         }
 
         Collections.sort(constructorLines);
         Collections.sort(exceptionLines);
         Collections.sort(accessLines);
 
-        return new Result(String.join("\n", constructorLines), String.join("\n", exceptionLines),
-                String.join("\n", accessLines));
+        return new Result(List.copyOf(constructorLines), List.copyOf(exceptionLines), List.copyOf(accessLines));
     }
 
-    public static record Result(String constructors, String exceptions, String access) {
+    public static record Result(List<String> constructors, List<String> exceptions, List<String> access) {
     }
 }

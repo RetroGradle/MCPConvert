@@ -1,6 +1,4 @@
-package uk.gemwire.mcpconvert.mcpconfig.cli;
-
-import uk.gemwire.mcpconvert.Main;
+package uk.gemwire.mcpconvert.cli;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +7,28 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
-import static uk.gemwire.mcpconvert.mcpconfig.cli.CLIUtils.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
+import static uk.gemwire.mcpconvert.cli.CLIUtils.*;
+
+/**
+ * @author SciWhiz12
+ */
 public class ConfigFileGenerator {
+    public static final ObjectMapper JSON;
+
+    static {
+        DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("    ", DefaultIndenter.SYS_LF);
+        JSON = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .setDefaultPrettyPrinter(new DefaultPrettyPrinter().withObjectIndenter(indenter).withArrayIndenter(indenter));
+    }
+
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String... args) {
@@ -95,7 +112,7 @@ public class ConfigFileGenerator {
                                 System.err.println("Could not delete existing file. An exception may occur.");
                             }
                         }
-                        Main.JSON.writeValue(file, functions);
+                        JSON.writeValue(file, functions);
                         System.out.printf("Written to %s.%n", file.getAbsolutePath());
                     } catch (IOException exception) {
                         System.err.println("Exception while writing to " + file.getAbsolutePath());

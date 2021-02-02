@@ -1,9 +1,12 @@
-package uk.gemwire.mcpconvert.mcpconfig.cli;
+package uk.gemwire.mcpconvert.cli;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
+/**
+ * @author SciWhiz12
+ */
 public class ConfigFunction {
     public final String name;
     public String version;

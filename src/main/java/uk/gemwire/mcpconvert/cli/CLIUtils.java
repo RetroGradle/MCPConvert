@@ -1,4 +1,4 @@
-package uk.gemwire.mcpconvert.mcpconfig.cli;
+package uk.gemwire.mcpconvert.cli;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,12 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * @author SciWhiz12
+ */
 public class CLIUtils {
     public static Scanner CONSOLE = new Scanner(System.in);
-    public static final List<String> YES_CHOICES = List.of("y", "ye", "yes", "ok");
+    public static final List<String> YES_CHOICES = List.of("y", "ye", "yep", "yes", "ok");
     public static final List<String> NO_CHOICES = List.of("n", "no");
 
     public static List<String> getList(String prompt) {
@@ -121,13 +124,6 @@ public class CLIUtils {
         return choice(callback, NO_CHOICES);
     }
 
-    public static class Choice {
-        private final Predicate<String> validator;
-        private final Consumer<String> callback;
-
-        Choice(Consumer<String> callback, Predicate<String> validator) {
-            this.validator = validator;
-            this.callback = callback;
-        }
+    public static record Choice(Consumer<String> callback, Predicate<String> validator) {
     }
 }
