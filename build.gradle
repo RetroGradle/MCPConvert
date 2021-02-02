@@ -6,10 +6,18 @@ group = 'uk.gemwire'
 archivesBaseName = 'mcpconvert'
 version = '0.1'
 
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url = 'https://files.minecraftforge.net/maven/' }
+}
+
 dependencies {
+    implementation group: 'net.minecraftforge', name: 'srgutils', version: '0.3.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.2'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.2'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.2'
+    implementation group: 'com.google.jimfs', name: 'jimfs', version: '1.2'
 }
 
 application {
@@ -21,16 +29,6 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(15)
     }
-}
-
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url = 'https://files.minecraftforge.net/maven/' }
-}
-
-dependencies {
-    implementation group: 'net.minecraftforge', name: 'srgutils', version: '0.3.0'
 }
 
 // Enable preview features, so we can have records and such
