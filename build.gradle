@@ -1,5 +1,5 @@
 plugins {
-	id 'application'
+    id 'application'
 }
 
 group = 'uk.gemwire'
@@ -8,6 +8,7 @@ version = '0.1'
 
 application {
     mainClassName = 'uk.gemwire.mcpconvert.Main'
+    applicationDefaultJvmArgs += ["--enable-preview"]
 }
 
 java {
@@ -23,5 +24,19 @@ repositories {
 }
 
 dependencies {
-	implementation group: 'net.minecraftforge', name: 'srgutils', version: '0.3.0'
+    implementation group: 'net.minecraftforge', name: 'srgutils', version: '0.3.0'
+}
+
+// Enable preview features, so we can have records and such
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += '--enable-preview'
+}
+
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += "--enable-preview"
 }
