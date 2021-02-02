@@ -1,25 +1,26 @@
 package uk.gemwire.mcpconvert.download.util;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import uk.gemwire.mcpconvert.download.util.io.IOConsumer;
 
 public interface Caching {
 
-    File CACHE = new File(".cache");
+    Path CACHE = Path.of(".cache");
 
-    static File cached(String path, IOConsumer<File> generator) throws IOException {
-        CACHE.mkdirs();
-        return cached(new File(CACHE, path), generator);
+    static Path cached(String path, IOConsumer<Path> generator) throws IOException {
+        Files.createDirectories(CACHE);
+        return cached(CACHE.resolve(path), generator);
     }
 
-    static File cached(File cached, IOConsumer<File> generator) throws IOException {
-        if (cached.exists()) return cached;
+    static Path cached(Path cached, IOConsumer<Path> generator) throws IOException {
+        if (Files.exists(cached)) return cached;
 
         generator.accept(cached);
 
-        if (!cached.exists()) throw new AssertionError();
+        if (!Files.exists(cached)) throw new AssertionError("Generator did not generate the cached file");
 
         return cached;
     }
