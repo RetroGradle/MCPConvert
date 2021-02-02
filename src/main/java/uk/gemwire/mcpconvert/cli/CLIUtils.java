@@ -1,4 +1,4 @@
-package uk.gemwire.mcpconvert.mcpconfig.cli;
+package uk.gemwire.mcpconvert.cli;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * @author SciWhiz12
+ */
 public class CLIUtils {
     public static Scanner CONSOLE = new Scanner(System.in);
     public static final List<String> YES_CHOICES = List.of("y", "ye", "yes", "ok");

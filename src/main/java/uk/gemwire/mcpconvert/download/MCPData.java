@@ -7,19 +7,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-import uk.gemwire.mcpconvert.download.util.Caching;
-
+/**
+ * @author AterAnimAvis
+ */
 public class MCPData {
+    public static final String MCP_DATA_URL =
+        "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/{version}/mcp-{version}-srg.zip";
+
     public static Path provideCachedFile(String version) throws IOException {
-        String url = "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/{version}/mcp-{version}-srg.zip"
-            .replace("{version}", version);
+        String url = MCP_DATA_URL.replace("{version}", version);
         return Caching.cached("mcp-{version}-srg.zip".replace("{version}", version), (path) -> downloadFileFromUrl(url, path));
     }
 
     private static void downloadFileFromUrl(String url, Path destination) throws IOException {
+        System.out.printf("MCPData: downloading %s...", url);
         try (InputStream in = new URL(url).openStream()) {
             Files.copy(in, destination, StandardCopyOption.REPLACE_EXISTING);
         }
+        System.out.println(" done!");
     }
 
 }
