@@ -41,11 +41,11 @@ public class PatchConverter {
         lines.set(1, lines.get(1).replace('\\', '/'));
 
         if (lines.get(0).contains("minecraft_server/")) {
-            lines.set(0, lines.get(0).replaceAll("minecraft_server/", "a/"));
-            lines.set(1, lines.get(1).replaceAll("minecraft_server_patched/", "b/"));
+            lines.set(0, lines.get(0).replaceFirst("minecraft_server/", "a/"));
+            lines.set(1, lines.get(1).replaceFirst("minecraft_server_patched/", "b/"));
         } else if (lines.get(0).contains("minecraft/")) {
-            lines.set(0, lines.get(0).replaceAll("minecraft/", "a/"));
-            lines.set(1, lines.get(1).replaceAll("minecraft_patched/", "b/"));
+            lines.set(0, lines.get(0).replaceFirst("minecraft/", "a/"));
+            lines.set(1, lines.get(1).replaceFirst("minecraft_patched/", "b/"));
         } else {
             System.err.println("PatchConverter: 'minecraft/' or 'minecraft_server/' not found in " + file);
         }
