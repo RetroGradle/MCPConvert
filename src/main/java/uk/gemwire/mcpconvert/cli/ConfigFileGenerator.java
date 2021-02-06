@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
@@ -112,7 +113,10 @@ public class ConfigFileGenerator {
                                 System.err.println("Could not delete existing file. An exception may occur.");
                             }
                         }
-                        JSON.writeValue(file, functions);
+                        JSON.writeValue(file,
+                            functions.stream()
+                                .collect(Collectors.toMap(func -> func.name, RawConfigFunction::from))
+                        );
                         System.out.printf("Written to %s.%n", file.getAbsolutePath());
                     } catch (IOException exception) {
                         System.err.println("Exception while writing to " + file.getAbsolutePath());
@@ -192,17 +196,17 @@ public class ConfigFileGenerator {
 
         final String verPlaceholder = "CHANGE_ME";
 
-        functions.add(ConfigFunction.create("decompile")
-            .version("net.minecraftforge:forgeflower:" + verPlaceholder)
-            .args("-din=1", "-rbr=1", "-dgs=1", "-asc=1", "-rsy=1", "-iec=1", "-jvn=1", "-log=TRACE", "-cfg", "{libraries}",
-                "{input}", "{output}")
-            .jvmargs("-Xmx4G")
-        );
-
         functions.add(ConfigFunction.create("mcinject")
             .version("de.oceanlabs.mcp:mcinjector:" + verPlaceholder + ":fatjar")
             .args("--in", "{input}", "--out", "{output}", "--log", "{log}", "--lvt=LVT", "--exc", "{exceptions}", "--acc",
                 "{access}", "--ctr", "{constructors}")
+        );
+
+        functions.add(ConfigFunction.create("fernflower")
+            .version("net.minecraftforge:forgeflower:" + verPlaceholder)
+            .args("-din=1", "-rbr=1", "-dgs=1", "-asc=1", "-rsy=1", "-iec=1", "-jvn=1", "-log=TRACE", "-cfg", "{libraries}",
+                "{input}", "{output}")
+            .jvmargs("-Xmx4G")
         );
 
         functions.add(ConfigFunction.create("merge")
@@ -217,5 +221,21 @@ public class ConfigFileGenerator {
         );
 
         return functions;
+    }
+
+    private static class RawConfigFunction {
+        public String version;
+        public List<String> args;
+        public List<String> jvmargs;
+        public String repo;
+
+        static RawConfigFunction from(ConfigFunction func) {
+            RawConfigFunction newFunc = new RawConfigFunction();
+            newFunc.version = func.version;
+            newFunc.args = func.args;
+            newFunc.jvmargs = func.jvmargs;
+            newFunc.repo = func.repo;
+            return newFunc;
+        }
     }
 }
