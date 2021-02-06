@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class JoinedExcSplitter {
 
     private static final Pattern CONSTRUCTOR_REGEX = Pattern.compile("(\\.<init>)(\\(\\S*)(=\\S*\\|p_i)(\\d*)");
-    private static final Pattern EXCEPTION_REGEX = Pattern.compile("(\\(\\S*\\)\\S*)=(\\S*)\\|");
+    private static final Pattern EXCEPTION_REGEX = Pattern.compile("(\\(\\S*\\)\\S*)=(\\S+)\\|");
     private static final Pattern ACCESS_REGEX = Pattern.compile("(\\S*)\\.(\\S*)(\\(\\S*\\)\\S*)-Access=(\\S*)");
 
     @SuppressWarnings("StringBufferReplaceableByString")
