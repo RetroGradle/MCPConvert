@@ -28,8 +28,13 @@ public class JoinedExcSplitter {
         List<String> accessLines = new ArrayList<>();
 
         for (String line : lines) {
+            boolean lineMatched = false;
             // If we match ".<init>" we're a constructor.
             Matcher constructorMatcher = CONSTRUCTOR_REGEX.matcher(line);
+            // If we match (SOMETHING)SOMETHING=SOMETHING|, we're an exception line
+            Matcher exceptionMatcher = EXCEPTION_REGEX.matcher(line);
+            Matcher accessMatcher = ACCESS_REGEX.matcher(line);
+
             if (constructorMatcher.find()) {
                 // constructors.txt lines are in the form
                 // SRG CLASS SIGNATURE
@@ -46,11 +51,9 @@ public class JoinedExcSplitter {
                     .append(constructorMatcher.group(2));
 
                 constructorLines.add(constructorBuilder.toString());
-                continue;
+                lineMatched = true;
             }
 
-            // If we match (SOMETHING)SOMETHING=SOMETHING|, we're an exception line
-            Matcher exceptionMatcher = EXCEPTION_REGEX.matcher(line);
             if (exceptionMatcher.find()) {
                 // exceptions.txt is in the form
                 // CLASS/FUNCTION (PARAMS)RETURN EXCEPTION
@@ -65,10 +68,9 @@ public class JoinedExcSplitter {
                     .append(exceptionMatcher.group(1)).append(" ")
                     .append(exceptionMatcher.group(2));
                 exceptionLines.add(exceptionBuilder.toString());
-                continue;
+                lineMatched = true;
             }
 
-            Matcher accessMatcher = ACCESS_REGEX.matcher(line);
             if (accessMatcher.find()) {
                 // access.txt is in the form
                 // ACCESS CLASS OBJECT SIGNATURE
@@ -82,10 +84,12 @@ public class JoinedExcSplitter {
                     .append(accessMatcher.group(3));
 
                 accessLines.add(accessBuilder.toString());
-                continue;
+                lineMatched = true;
             }
 
-            System.err.println("JoinedExcSplitter: No useful data on line: " + line);
+            if (!lineMatched) {
+                System.err.println("JoinedExcSplitter: No useful data on line: " + line);
+            }
         }
 
         Collections.sort(constructorLines);
