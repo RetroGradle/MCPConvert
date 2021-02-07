@@ -61,14 +61,9 @@ public class JoinedExcSplitter {
                 final String className = line.substring(0, exceptionMatcher.start(0)).replace(".", "/");
 
                 StringBuilder exceptionBuilder = new StringBuilder()
-                        .append(className).append(" ");
-                int groupcount=  exceptionMatcher.groupCount();
-                for (int i = 1; i <= groupcount; i++){
-                    exceptionBuilder.append(exceptionMatcher.group(i));
-                    if(i < groupcount){
-                        exceptionBuilder.append(" ");
-                    }
-                }
+                    .append(className).append(" ")
+                    .append(exceptionMatcher.group(1)).append(" ");
+                exceptionBuilder.append(String.join(" ", exceptionMatcher.group(2).split(",")));
                 exceptionLines.add(exceptionBuilder.toString());
                 continue;
             }
