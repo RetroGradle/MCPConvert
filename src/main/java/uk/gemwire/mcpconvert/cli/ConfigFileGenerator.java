@@ -196,7 +196,7 @@ public class ConfigFileGenerator {
 
         final String verPlaceholder = "CHANGE_ME";
 
-        functions.add(ConfigFunction.create("mcinject")
+        functions.add(ConfigFunction.create("mcinjector")
             .version("de.oceanlabs.mcp:mcinjector:" + verPlaceholder + ":fatjar")
             .args("--in", "{input}", "--out", "{output}", "--log", "{log}", "--lvt=LVT", "--exc", "{exceptions}", "--acc",
                 "{access}", "--ctr", "{constructors}")
