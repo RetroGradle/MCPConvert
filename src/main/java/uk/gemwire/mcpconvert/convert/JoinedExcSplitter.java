@@ -61,10 +61,13 @@ public class JoinedExcSplitter {
                 // Matches are in the order
                 // (PARAMS)RETURN = EXCEPTION |
 
-                final String className = line.substring(0, exceptionMatcher.start(0)).replace(".", "/");
+                final String[] combinedClassMethod = line.substring(0, exceptionMatcher.start(0)).split("\\.");
+                final String className = combinedClassMethod[0];
+                final String methodName = combinedClassMethod[1];
 
                 StringBuilder exceptionBuilder = new StringBuilder()
                     .append(className).append(" ")
+                    .append(methodName).append(" ")
                     .append(exceptionMatcher.group(1)).append(" ")
                     .append(exceptionMatcher.group(2));
                 exceptionLines.add(exceptionBuilder.toString());
