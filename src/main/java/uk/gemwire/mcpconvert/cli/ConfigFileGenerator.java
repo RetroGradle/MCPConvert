@@ -2,8 +2,14 @@ package uk.gemwire.mcpconvert.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -27,7 +33,7 @@ public class ConfigFileGenerator {
         JSON = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .setDefaultPrettyPrinter(new DefaultPrettyPrinter().withObjectIndenter(indenter).withArrayIndenter(indenter));
+            .setDefaultPrettyPrinter(new DefaultPrettyPrinter().withObjectIndenter(indenter));
     }
 
     public static Scanner scanner = new Scanner(System.in);
@@ -37,15 +43,18 @@ public class ConfigFileGenerator {
 
         final List<ConfigFunction> functions = new ArrayList<>();
 
+        System.out.println(" - Config functions generation -");
         choiceInput("Load defaults? (tool versions will be \"CHANGE_ME\") [y]/n",
             s -> {},
             yes(s -> {
-                functions.addAll(getDefaults());
+                functions.addAll(getDefaultFunctions());
                 System.out.println("Loaded defaults. Please edit them to correct their version.");
             })
         );
 
-        while (true) {
+        boolean[] active = { true };
+
+        while (active[0]) {
             if (functions.isEmpty()) {
                 functions.add(addStep());
             }
@@ -55,7 +64,7 @@ public class ConfigFileGenerator {
                 System.out.printf(" #%s: \"%s\"%n", i, functions.get(i).name);
             }
 
-            choiceInput("[e]dit a step, [i]nsert a new step, [d]elete a step, [s]ave and quit",
+            choiceInput("[e]dit a step, [i]nsert a new step, [d]elete a step, [c]ontinue generation, [q]uit",
                 choice(input -> { // Edit
                     String posStr = requiredInput("Position of step to edit", s -> parseInt(s) != null);
                     Integer pos = parseInt(posStr);
@@ -104,28 +113,49 @@ public class ConfigFileGenerator {
                     }
                 }, "d", "delete"),
 
-                choice(input -> { // Save / Quit
-                    File file = new File(defaultedInput("Output file", "config.json"));
-                    try {
-                        if (file.exists()) {
-                            System.out.println("Overwriting existing file.");
-                            if (!file.delete()) {
-                                System.err.println("Could not delete existing file. An exception may occur.");
-                            }
-                        }
-                        JSON.writeValue(file,
-                            functions.stream()
-                                .collect(Collectors.toMap(func -> func.name, RawConfigFunction::from))
-                        );
-                        System.out.printf("Written to %s.%n", file.getAbsolutePath());
-                    } catch (IOException exception) {
-                        System.err.println("Exception while writing to " + file.getAbsolutePath());
-                        exception.printStackTrace();
-                        System.exit(1);
-                    }
-                    System.exit(0);
-                }, "s", "save"));
+                choice(input -> { // Continue generation
+                    active[0] = false;
+                }, "c", "continue"),
 
+                choice(input -> { // Quit
+                    System.out.println("User cancelled generation.");
+                    System.exit(0);
+                }, "q", "quit", "close", "exit"));
+        }
+
+        Libraries libs = new Libraries();
+
+        libs.client.add(getDefaultLibrary());
+        libs.server.add(getDefaultLibrary());
+        libs.joined.add(getDefaultLibrary());
+
+        System.out.println(" - Extra libraries generation -");
+
+        editList("Client libraries", libs.client);
+        editList("Server libraries", libs.server);
+        editList("Joined libraries", libs.joined);
+
+        System.out.println("Finished generation. Writing to output...");
+
+        Map<String, ConfigJSONElement> output = new LinkedHashMap<>();
+        functions.forEach(func -> output.put(func.name, RawConfigFunction.from(func)));
+        output.put("libraries", libs);
+
+        Path file = Path.of(defaultedInput("Output file", "config.json"));
+        try {
+            if (Files.deleteIfExists(file)) {
+                System.out.println("Overwriting existing file.");
+            }
+
+            try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE_NEW)) {
+                JSON.writeValue(stream, output);
+            }
+
+            System.out.printf("Written to %s.%n", file.toAbsolutePath());
+        } catch (IOException exception) {
+            System.err.println("Exception while writing to " + file.toAbsolutePath());
+            exception.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -191,7 +221,11 @@ public class ConfigFileGenerator {
         }
     }
 
-    static List<ConfigFunction> getDefaults() {
+    static String getDefaultLibrary() {
+        return "com.google.code.findbugs:jsr305:3.0.1";
+    }
+
+    static List<ConfigFunction> getDefaultFunctions() {
         List<ConfigFunction> functions = new ArrayList<>(4);
 
         final String verPlaceholder = "CHANGE_ME";
@@ -223,7 +257,9 @@ public class ConfigFileGenerator {
         return functions;
     }
 
-    private static class RawConfigFunction {
+    private interface ConfigJSONElement {}
+
+    private static class RawConfigFunction implements ConfigJSONElement {
         public String version;
         public List<String> args;
         public List<String> jvmargs;
@@ -233,9 +269,15 @@ public class ConfigFileGenerator {
             RawConfigFunction newFunc = new RawConfigFunction();
             newFunc.version = func.version;
             newFunc.args = func.args;
-            newFunc.jvmargs = func.jvmargs;
+            newFunc.jvmargs = func.jvmargs.isEmpty() ? null : func.jvmargs;
             newFunc.repo = func.repo;
             return newFunc;
         }
+    }
+
+    private static class Libraries implements ConfigJSONElement {
+        public List<String> client = new ArrayList<>(2);
+        public List<String> server = new ArrayList<>(2);
+        public List<String> joined = new ArrayList<>(2);
     }
 }
