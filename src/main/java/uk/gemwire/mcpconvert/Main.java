@@ -1,7 +1,6 @@
 package uk.gemwire.mcpconvert;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,12 +59,10 @@ public class Main {
                 output.getPath("patches/server"));
 
             // Convert joined.srg to joined.tsrg
-            try (InputStream inputStream = Files.newInputStream(mcpData.getPath("joined.srg"))) {
-                System.out.println(" - Converting SRG to TSRG");
-                Path tempTsrg = inMemFS.getPath("config/joined.tsrg");
-                JoinedSrgConverter.convert(inputStream, tempTsrg);
-                Files.copy(tempTsrg, output.getPath("joined.tsrg"));
-            }
+            System.out.println(" - Converting SRG to TSRG");
+            Path tempTsrg = inMemFS.getPath("config/joined.tsrg");
+            JoinedSrgConverter.convert(mcpData.getPath("joined.srg"), inMemFS.getPath("temp.srg"), tempTsrg);
+            Files.copy(tempTsrg, output.getPath("joined.tsrg"));
 
             // Split joined.exc and write to their separate files
             System.out.println(" - Parsing and splitting joined EXC");
