@@ -123,11 +123,7 @@ public class ConfigFileGenerator {
                 }, "q", "quit", "close", "exit"));
         }
 
-        Libraries libs = new Libraries();
-
-        libs.client.add(getDefaultLibrary());
-        libs.server.add(getDefaultLibrary());
-        libs.joined.add(getDefaultLibrary());
+        Libraries libs = Libraries.withDefaults();
 
         System.out.println(" - Extra libraries generation -");
 
@@ -221,10 +217,6 @@ public class ConfigFileGenerator {
         }
     }
 
-    static String getDefaultLibrary() {
-        return "com.google.code.findbugs:jsr305:3.0.1";
-    }
-
     static List<ConfigFunction> getDefaultFunctions() {
         List<ConfigFunction> functions = new ArrayList<>(4);
 
@@ -279,5 +271,14 @@ public class ConfigFileGenerator {
         public List<String> client = new ArrayList<>(2);
         public List<String> server = new ArrayList<>(2);
         public List<String> joined = new ArrayList<>(2);
+
+        public static Libraries withDefaults() {
+            Libraries libs = new Libraries();
+            libs.client.add("com.google.code.findbugs:jsr305:3.0.1");
+            libs.server.add("com.google.code.findbugs:jsr305:3.0.1");
+            libs.joined.add("com.google.code.findbugs:jsr305:3.0.1");
+            libs.joined.add("net.minecraftforge:mergetool:0.2.3.2:forge");
+            return libs;
+        }
     }
 }
