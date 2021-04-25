@@ -84,8 +84,7 @@ public class JoinedExcSplitter {
             // (PARAMS)RETURN = EXCEPTION |
             exceptionCallback.accept(
                 String.join(" ",
-                    exceptionMatcher.group("class"),
-                    exceptionMatcher.group("func"),
+                    exceptionMatcher.group("class") + "/" + exceptionMatcher.group("func"),
                     exceptionMatcher.group("desc"),
                     String.join(" ",
                         exceptionMatcher.group("exceptions").split(","))
