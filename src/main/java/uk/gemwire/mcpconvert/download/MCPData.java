@@ -12,7 +12,7 @@ import java.nio.file.StandardCopyOption;
  */
 public class MCPData {
     public static final String MCP_DATA_URL =
-        "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/{version}/mcp-{version}-srg.zip";
+        "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/{version}/mcp-{version}-srg.zip";
 
     public static Path provideCachedFile(String version) throws IOException {
         String url = MCP_DATA_URL.replace("{version}", version);
