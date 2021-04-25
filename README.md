@@ -92,7 +92,7 @@ net/minecraft/client/Minecraft.func_71384_a()V=org/lwjgl/LWJGLException,java/io/
 will have the exceptions.txt line
 
 ```
-net/minecraft/client/Minecraft func_71384_a ()V org/lwjgl/LWJGLException java/io/IOException
+net/minecraft/client/Minecraft/func_71384_a ()V org/lwjgl/LWJGLException java/io/IOException
 ```
 
 #### access.txt

@@ -24,19 +24,19 @@ public class JoinedExcSplitterTest {
     void testExceptions() {
         testExcLine("com/example/test/TestExceptions.one(Ljava/lang/Object;)V=java/lang/Exception|",
             null,
-            "com/example/test/TestExceptions one (Ljava/lang/Object;)V java/lang/Exception",
+            "com/example/test/TestExceptions/one (Ljava/lang/Object;)V java/lang/Exception",
             null);
 
         testExcLine("com/example/test/TestExceptions.two()Ljava/util/function/Function;=java/lang/Exception,java/lang/Error|",
             null,
-            "com/example/test/TestExceptions two ()Ljava/util/function/Function; java/lang/Exception java/lang/Error",
+            "com/example/test/TestExceptions/two ()Ljava/util/function/Function; java/lang/Exception java/lang/Error",
             null);
 
         testExcLine(
             "com/example/test/TestExceptions.three(Ljava/lang/Error;)Z=org/example/ExampleException," +
                 "java/lang/RuntimeException,java/lang/Error|",
             null,
-            "com/example/test/TestExceptions three (Ljava/lang/Error;)Z org/example/ExampleException " +
+            "com/example/test/TestExceptions/three (Ljava/lang/Error;)Z org/example/ExampleException " +
                 "java/lang/RuntimeException java/lang/Error",
             null);
     }
@@ -58,7 +58,7 @@ public class JoinedExcSplitterTest {
     void testMixedCE() {
         testExcLine("com/example/test/TestMixed.<init>(Ljava/lang/ClassLoader;)V=java/lang/Exception|p_i1337_1_",
             "1337 com/example/test/TestMixed (Ljava/lang/ClassLoader;)V",
-            "com/example/test/TestMixed <init> (Ljava/lang/ClassLoader;)V java/lang/Exception",
+            "com/example/test/TestMixed/<init> (Ljava/lang/ClassLoader;)V java/lang/Exception",
             null);
     }
 
@@ -74,7 +74,7 @@ public class JoinedExcSplitterTest {
     void testMixedEA() {
         testExcLine("com/example/test/TestMixed.two(Ljava/util/Optional;)I=java/io/IOException|-Access=PROTECTED",
             null,
-            "com/example/test/TestMixed two (Ljava/util/Optional;)I java/io/IOException",
+            "com/example/test/TestMixed/two (Ljava/util/Optional;)I java/io/IOException",
             "PROTECTED com/example/test/TestMixed two (Ljava/util/Optional;)I");
     }
 
@@ -84,7 +84,7 @@ public class JoinedExcSplitterTest {
             "com/example/test/TestMixed.<init>(Jjava/lang/ErrorJZ)V=java/lang/IOException," +
                 "org/example/OopsException|p_i124816_0_,p_i124816_2_p_i124816_3_p_i124816_5_-Access=PROTECTED",
             "124816 com/example/test/TestMixed (Jjava/lang/ErrorJZ)V",
-            "com/example/test/TestMixed <init> (Jjava/lang/ErrorJZ)V java/lang/IOException org/example/OopsException",
+            "com/example/test/TestMixed/<init> (Jjava/lang/ErrorJZ)V java/lang/IOException org/example/OopsException",
             "PROTECTED com/example/test/TestMixed <init> (Jjava/lang/ErrorJZ)V");
     }
 
