@@ -52,6 +52,12 @@ public class JoinedExcSplitterTest {
             null,
             null,
             "PRIVATE com/example/test/TestAccess two (ZZZIZZ)V");
+
+        testExcLine("com/example/test/TestAccess.three()Lcom/example/test/TestAccess;-Access=PUBLIC",
+            null,
+            null,
+            "PUBLIC com/example/test/TestAccess three ()Lcom/example/test/TestAccess;"
+        );
     }
 
     @Test

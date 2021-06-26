@@ -23,7 +23,7 @@ public class JoinedExcSplitter {
     private static final Pattern EXCEPTION_REGEX =
         compile("(?<class>\\S*)\\.(?<func>\\S*)(?<desc>\\(\\S*\\)\\S*)=(?<exceptions>\\S+)\\|");
     private static final Pattern ACCESS_REGEX =
-        compile("(?<class>\\S*)\\.(?<func>\\S*)(?<desc>\\(\\S*\\)[^=\\s]).*-Access=(?<access>\\S*)");
+        compile("(?<class>\\S*)\\.(?<func>\\S*)(?<desc>\\(\\S*\\)[^=\\s]+).*-Access=(?<access>\\S*)");
 
     public static Result parseExc(Path excFile) throws IOException {
         List<String> lines = Files.readAllLines(excFile, StandardCharsets.UTF_8);
