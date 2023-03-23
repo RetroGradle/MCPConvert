@@ -59,7 +59,8 @@ net/minecraft/client/Minecraft$2.<init>(Lnet/minecraft/client/Minecraft;)V=|p_i4
 net/minecraft/server/dedicated/DedicatedServer.func_71190_q()V-Access=PUBLIC
 ```
 
-The MCPConfig data uses three files - constructors.txt, exceptions.txt and access.txt to encode this information.
+Modern versions of MCInjector uses three files - constructors.txt, exceptions.txt and access.txt to encode this information.
+However, the legacy versions we use requires no changes.
 
 #### constructors.txt
 
@@ -187,5 +188,7 @@ For example, the 1.12.2 config.json:
 
 It defines the steps `mcinjector`, `fernflower`, `merge` and `rename` along with the programs that should be retrieved and how to run them.
 
-Libraries is unimportant for now.
+MCInjector and ForgeFlower must be changed here.
+
+mergetool MUST be removed from the libraries, lest the game crash at runtime due to the presence of a third Side; BUKKIT.
 
