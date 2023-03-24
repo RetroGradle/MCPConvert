@@ -277,7 +277,6 @@ public class ConfigFileGenerator {
             libs.client.add("com.google.code.findbugs:jsr305:3.0.1");
             libs.server.add("com.google.code.findbugs:jsr305:3.0.1");
             libs.joined.add("com.google.code.findbugs:jsr305:3.0.1");
-            libs.joined.add("net.minecraftforge:mergetool:0.2.3.2:forge");
             return libs;
         }
     }
