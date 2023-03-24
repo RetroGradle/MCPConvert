@@ -31,25 +31,10 @@ test {
 
 application {
     mainClassName = 'uk.gemwire.mcpconvert.Main'
-    applicationDefaultJvmArgs += ["--enable-preview"]
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(15)
+        languageVersion = JavaLanguageVersion.of(17)
     }
-}
-
-// Enable preview features, so we can have records and such
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs += '--enable-preview'
-}
-
-tasks.withType(Test) {
-    jvmArgs += "--enable-preview"
-}
-
-tasks.withType(JavaExec) {
-    jvmArgs += "--enable-preview"
 }
