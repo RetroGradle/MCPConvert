@@ -12,13 +12,13 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'net.minecraftforge', name: 'srgutils', version: '0.3.0'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.2'
+    implementation group: 'net.minecraftforge', name: 'srgutils', version: '0.4.13'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.14.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.14.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.2'
     implementation group: 'com.google.jimfs', name: 'jimfs', version: '1.2'
 
-    testImplementation(platform('org.junit:junit-bom:5.7.1'))
+    testImplementation(platform('org.junit:junit-bom:5.9.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
 }
 
